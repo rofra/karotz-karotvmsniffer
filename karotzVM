@@ -42,8 +42,6 @@ mkdir -p /tmp/karotzvmlog/
 
 # Get the variables needed
 UUID=$(uuidgen)
-FILEN="${UUID}.sniff"
-FILENO="${UUID}.log"
 FILENOIN="${UUID}.in.log"
 FILENOOUT="${UUID}.out.log"
 
