@@ -45,18 +45,27 @@ UUID=$(uuidgen)
 FILENOIN="${UUID}.in.log"
 FILENOOUT="${UUID}.out.log"
 FILENOLAU="${UUID}.launch.log"
+FILENOTRAP="${UUID}.trap.log"
 
 # Log the launch
 echo "`date -u` Executing original Karotzvm [${UUID}] with params [${arguments}]" >> /tmp/karotzvmlog/launch.log
 
-# Log the ouput
-exec 1>> "/tmp/karotzvmlog/${FILENOOUT}" 2>&1
 
 # Log the launch with args
 echo "${SCRIPTDIR}/karotzVMOriginal $arguments" > /tmp/karotzvmlog/${FILENOLAU}
 
-# Log everything else put into the stdin
-tee "/tmp/karotzvmlog/${FILENOIN}"|${SCRIPTDIR}/karotzVMOriginal $arguments
-#tee "/tmp/karotzvmlog/${FILENOIN}" &
-#${SCRIPTDIR}/karotzVMOriginal $arguments
+# TRAP ALL
+i=-1; while((++i<33));
+do
+    trap "echo \"\`date -u\` $i\" >> /tmp/karotzvmlog/${FILENOTRAP}; kill -$i \$(cat /tmp/karotzvm.pid); killall tee" $i;
+done
 
+# Log the ouput
+exec 1>> "/tmp/karotzvmlog/${FILENOOUT}" 2>&1
+
+# Log everything else put into the stdin
+tee "/tmp/karotzvmlog/${FILENOIN}"|${SCRIPTDIR}/karotzVMOriginal $arguments &
+PIID=$!
+echo ${PIID} > /tmp/karotzvm.pid
+
+wait
