@@ -57,3 +57,6 @@ echo "${SCRIPTDIR}/karotzVMOriginal $arguments" > /tmp/karotzvmlog/${FILENOLAU}
 
 # Log everything else put into the stdin
 tee "/tmp/karotzvmlog/${FILENOIN}"|${SCRIPTDIR}/karotzVMOriginal $arguments
+#tee "/tmp/karotzvmlog/${FILENOIN}" &
+#${SCRIPTDIR}/karotzVMOriginal $arguments
+
