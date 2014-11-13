@@ -54,18 +54,25 @@ echo "`date -u` Executing original Karotzvm [${UUID}] with params [${arguments}]
 # Log the launch with args
 echo "${SCRIPTDIR}/karotzVMOriginal $arguments" > /tmp/karotzvmlog/${FILENOLAU}
 
-# TRAP ALL
-i=-1; while((++i<33));
-do
-    trap "echo \"\`date -u\` $i\" >> /tmp/karotzvmlog/${FILENOTRAP}; kill -$i \$(cat /tmp/karotzvm.pid); killall tee" $i;
-done
 
 # Log the ouput
-exec 1>> "/tmp/karotzvmlog/${FILENOOUT}" 2>&1
+#exec 1>> "/tmp/karotzvmlog/${FILENOOUT}" 2>&1
 
 # Log everything else put into the stdin
 tee "/tmp/karotzvmlog/${FILENOIN}"|${SCRIPTDIR}/karotzVMOriginal $arguments &
-PIID=$!
-echo ${PIID} > /tmp/karotzvm.pid
 
-wait
+# OR without tee
+#${SCRIPTDIR}/karotzVMOriginal $arguments &
+#
+PIID=$!
+
+# TRAP ALL
+i=-1; while((++i<33));
+do
+    trap "echo \"\`date -u\` $i\" >> /tmp/karotzvmlog/${FILENOTRAP}; kill -$i ${PIID};" $i;
+done
+
+#sleep 365d
+#wait
+wait ${PIID}
+
